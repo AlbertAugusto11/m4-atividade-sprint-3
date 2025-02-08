@@ -1,43 +1,35 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { generateId, usersDatabase } from "../database/database";
 import { IUser } from "../interfaces/users.interfaces";
+import { UsersServices } from "../services/users.services";
 
 export class UsersControllers{
     registerUser(req: Request, res: Response){
-        const { name, email } = req.body;
+        const usersServices = new UsersServices()
 
-        const newUser = { id: generateId(), name, email};
+        const response = usersServices.registerUser(req.body.name, req.body.email)
 
-        usersDatabase.push(newUser);
-
-        return res.status(201).json({ user: newUser, message: "Usuário cadastrado com sucesso."})
+        return res.status(201).json({ user: response, message: "Usuário cadastrado com sucesso."})
     }
     getUsers(req: Request, res: Response){
-        if(usersDatabase.length == 0){
-            return res.status(200).json({menssage:"A lista de usuarios está vazia", usersDatabase})
-        }else{
-            return res.status(200).json(usersDatabase)
-        }
+        const usersServices = new UsersServices()
+
+        const response = usersServices.getUsers()
+
+        return res.status(200).json(response)
     }
     updateUsers(req: Request, res: Response){
-        const index = usersDatabase.findIndex(element => element.id == Number(req.params.id))
-        const newUser: IUser = {id: Number(req.params.id), name: req.body.name, email: req.body.email}
+        const usersServices = new UsersServices()
 
-        if(index == -1){
-            return res.status(200).send("Usuário não encontrado")
-        }else{
-            usersDatabase.splice(index,1,newUser)
-            return res.status(200).json({menssage: "Usuario atualizado com Sucesso", user: newUser})
-        }
+        const response = usersServices.updateUsers(Number(req.params.id), req.body.name, req.body.email)
+
+        return res.status(200).json(response)
     }
     deleteUser(req: Request, res: Response){
-        const index = usersDatabase.findIndex(element => element.id == Number(req.params.id))
+        const usersServices = new UsersServices()
 
-        if(index == -1){
-            return res.status(200).send("Usuário não encontrado")
-        }else{
-            usersDatabase.splice(index,1)
-            return res.status(200).json({menssage: "Usuario excluido com Sucesso"})
-        }
+        const response = usersServices.deleteUsers(Number(req.params.id))
+
+        return res.status(200).json(response)
     }
 }
