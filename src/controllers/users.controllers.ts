@@ -1,6 +1,5 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { generateId, usersDatabase } from "../database/database";
-import { IUser } from "../interfaces/users.interfaces";
 import { UsersServices } from "../services/users.services";
 
 export class UsersControllers{
@@ -8,6 +7,8 @@ export class UsersControllers{
         const usersServices = new UsersServices()
 
         const response = usersServices.registerUser(req.body.name, req.body.email)
+
+        console.log({menssage: "Novo Usuario Registrado", user: response})
 
         return res.status(201).json({ user: response, message: "Usuário cadastrado com sucesso."})
     }
